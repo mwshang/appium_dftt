@@ -52,21 +52,12 @@ class CheckLauchedAction(Action):
         ele = self.app.uiHandler.find_element_by_id(self.res1Id)
         if ele:
             self.driver.press_keycode(4)#返回键可以关键 https://www.cnblogs.com/meitian/p/6103391.html
-
-        if False:
-            ele = self.app.uiHandler.click(self.res1Id)
-            if ele != None:
-                time.sleep(2)
-                ele = self.app.uiHandler.click(
-                    xpath="//android.webkit.WebView[@content-desc=\"登录\"]/android.view.View[2]/android.view.View[2]")
-                print("关闭红包面板....")
-
-
+            # self.driver.close()
         #关键滑动面板
         ele = self.app.uiHandler.find_element_by_id(self.res2Id)
         if ele != None:
             self.driver.press_keycode(4)  # 返回键可以关键 https://www.cnblogs.com/meitian/p/6103391.html
-
+            # self.driver.close()
         ele = self.app.uiHandler.find_element_by_id(self.resId)
         if ele != None:
             self.finished = True
@@ -140,18 +131,9 @@ class ReadAction(Action):
 
     def enter(self):
         Action.enter(self)
-        self.container = self.app.uiHandler.find_element_by_id(self.resourceId)
-        self.elements = []
-        st = time.time()
-        # for className in self.classNames:
-        #     self.elements += self.app.uiHandler.findElementsByClassName(className,parent=self.container)
-
-        # if self.container:
         self.elements = self.app.uiHandler.find_elements_by_xpath("//android.support.v7.widget.RecyclerView/child::*")
-
-        # self.elements = self.app.uiHandler.find_elements_by_xpath("/hierarchy/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout[1]/android.support.v4.view.ViewPager/android.support.v4.view.ViewPager/android.widget.RelativeLayout/android.widget.FrameLayout/android.widget.LinearLayout/android.widget.RelativeLayout/android.widget.LinearLayout/android.widget.RelativeLayout/android.support.v4.view.ViewPager/android.widget.RelativeLayout/android.widget.LinearLayout[1]/android.support.v7.widget.RecyclerView/child::*")
-
-        print(str(len(self.elements))+"---------------time:" + str(time.time() - st))
+        if self.elements == None:
+            self.elements = []
 
     def _doTick(self):
         if self.curAction and self.curAction.finished:
@@ -163,7 +145,7 @@ class ReadAction(Action):
             self.curAction.enter()
         if self.curAction:
             self.curAction.tick()
-        if len(self.elements) == 0 or self.curAction == None or self.curAction.finished == True:
+        if self.curAction == None or (len(self.elements) == 0 and self.curAction.finished == True):
             self.finished = True
 
 
@@ -175,27 +157,35 @@ class DoReadAction(Action):
         self.element = element
 
     def isAD(self):
-        # eles = self.app.uiHandler.find_elements_by_android_uiautomator("广告",parent=self.element)
-        # eles = self.element.find_elements_by_android_uiautomator('new UiSelector().text("广告")')
-        eles = self.app.uiHandler.find_elements_by_xpath("android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[@text=广告*]")
-        return len(eles) > 0
-
+        ele = self.app.uiHandler.find_element_by_xpath("//android.widget.TextView[contains(@text,'广告')]",parent=self.element)
+        # eles = self.app.uiHandler.find_elements_by_xpath("android.widget.LinearLayout/android.widget.LinearLayout/android.widget.TextView[@text=广告*]")
+        # return self.app.uiHandler.textContains("广告",parent=self.element) != None
+        return ele != None
     def isSpecialTopic(self):
-        eles = self.app.uiHandler.find_elements_by_android_uiautomator("专题", parent=self.element)
-        return len(eles) > 0
-
+        # return self.app.uiHandler.textContains("专题", parent=self.element) != None
+        ele = self.app.uiHandler.find_element_by_xpath("//android.widget.TextView[contains(@text,'专题')]",
+                                                       parent=self.element)
+        return ele != None
     def enter(self):
         Action.enter(self)
 
-        # if self.isSpecialTopic() == True:
-        #     print("========================专题")
 
+        #     print("========================专题")
+        # st = time.time()
         if self.isAD() == False:
+            # print("DoReading......time1:" + str(time.time() - st))
+            # st = time.time()
             self.app.uiHandler.click(element=self.element)
-            print("start reading......")
-            time.sleep(6)
+            # print("DoReading......time2:" + str(time.time() - st))
+            # st = time.time()
+            # print("start reading......")
+            time.sleep(1)
+            # print("end reading......")
+            # st = time.time()
             self.back()
-        else:
+            # print("DoReading......time3:" + str(time.time() - st))
+        elif self.isSpecialTopic() == True:
+            print("========================专题 skip....")
             print("is ad,skiped......")
         self.finished = True
         print("end reading......")

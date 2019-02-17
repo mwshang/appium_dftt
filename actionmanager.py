@@ -15,7 +15,7 @@ class ActionManager:
     def start(self):
         # self.sched.add_job(self.tick, 'interval', seconds=0.1, max_instances=10, id=self.id,
         #                    args={self.swipe_speed})
-        self.sched.add_job(self.tick, 'interval', seconds=1, max_instances=1, id=self.id)
+        self.sched.add_job(self.tick, 'interval', seconds=0.1, max_instances=1, id=self.id)
         self.sched.start()
     def addAction(self,action):
         self.actions.append(action)

@@ -24,13 +24,13 @@ class UIHandler:
         else:
             return element
 
-    #find_elements_by_xpath
+
     def find_element_by_xpath(self,xpath,parent=None):
         try:
             parent = parent if parent != None else self.driver
             element = parent.find_element_by_xpath(xpath)
         except NoSuchElementException as e:
-            print("cant get element by " + xpath)
+            print("find_element_by_xpath::cant get element by " + xpath)
             return None
         else:
             return element
@@ -44,6 +44,10 @@ class UIHandler:
             return []
         else:
             return element
+
+    def textContains(self,text,parent=None): #这样搜索有问题
+        xpath = "//android.widget.TextView[contains(@text,'" + text + "')]"
+        return self.find_elements_by_xpath(xpath,parent)
 
     def find_elements_by_class_name(self,name,parent=None):
         try:
@@ -68,6 +72,27 @@ class UIHandler:
         return element
 
     # driver.find_elements_by_android_uiautomator("new UiSelector().text(\"+关注\")")
+
+    def find_element_by_link_text(self, text, parent=None):
+        try:
+            parent = parent if parent != None else self.driver
+            element = parent.find_element_by_link_text(text)
+        except NoSuchElementException as e:
+            print("find_element_by_link_text::cant get element by " + text)
+            return None
+        else:
+            return element
+
+    def find_element_by_android_uiautomator(self, text, parent=None):
+        try:
+            parent = parent if parent != None else self.driver
+            # elements = parent.find_elements_by_android_uiautomator("new UiSelector().textContains(\"+" + text + "\")")
+            element = parent.find_element_by_android_uiautomator('new UiSelector().textContains("'  + text + '")')
+        except NoSuchElementException as e:
+            print("find_element_by_android_uiautomator::cant get element by " + text)
+            return None
+        else:
+            return element
 
     def find_elements_by_android_uiautomator(self,text,parent=None):
         try:
