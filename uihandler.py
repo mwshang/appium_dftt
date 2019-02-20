@@ -1,8 +1,18 @@
 from selenium.common.exceptions import NoSuchElementException
+from builtins import Exception
+from selenium. webdriver.support.ui import WebDriverWait
 
 class UIHandler:
     def __init__(self,driver):
         self.driver = driver
+
+    def waitUntil(self,method,wait=None,driver=None,timeout=None):
+        wait = wait if wait != None else WebDriverWait(driver,timeout)
+        try:
+            return wait.until(method)
+        except Exception as e:
+            print("waitUntil::error msg:%s" % e.msg)
+            return None
 
     def find_element_by_id(self,name,parent=None):
         try:

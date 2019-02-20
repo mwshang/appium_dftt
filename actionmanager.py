@@ -17,6 +17,8 @@ class ActionManager:
         #                    args={self.swipe_speed})
         self.sched.add_job(self.tick, 'interval', seconds=0.1, max_instances=1, id=self.id)
         self.sched.start()
+        print("ActionManager::start.....")
+
     def addAction(self,action):
         self.actions.append(action)
 
@@ -24,7 +26,7 @@ class ActionManager:
         action.exit()
 
     def tick(self):
-        print("act mgr tick.....")
+
         if self.curAction:
             if self.curAction.finished == True:
                 self.curAction.exit()
